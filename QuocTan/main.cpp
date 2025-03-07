@@ -11,13 +11,20 @@ int main(int argc, char *argv[]) {
   }
   vector<vector<int>> tableInfo;
   vector<vector<string>> resourceName;
+  vector<string> nameOfResource;
+  int quantumTime;
   int choice;
   filein >> choice;
-  loadTable(filein, tableInfo, resourceName);
+  if (choice == 2) filein >> quantumTime;
+  loadTable(filein, tableInfo, resourceName, nameOfResource);
   if (choice == 1)
-    FCFS(tableInfo, resourceName, argv[2]);
+    FCFS(tableInfo, resourceName, nameOfResource, argv[2]);
+  else if (choice == 2)
+    RR(tableInfo, resourceName, nameOfResource, argv[2], quantumTime);
   else if (choice == 3)
-    SJF(tableInfo, resourceName, argv[2]);
+    SJF(tableInfo, resourceName, nameOfResource, argv[2]);
+  else if (choice == 4)
+    SRTN(tableInfo, resourceName, nameOfResource, argv[2]);
 
-    return 0;
+  return 0;
 }

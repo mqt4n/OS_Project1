@@ -7,7 +7,8 @@
 using namespace std;
 
 void loadTable(ifstream &filein, vector<vector<int>> &tableInfo,
-               vector<vector<string>> &resourceName) {
+               vector<vector<string>> &resourceName,
+               vector<string> &nameOfResource) {
   int number_of_processes;
   filein >> number_of_processes;
   string c;
@@ -28,8 +29,13 @@ void loadTable(ifstream &filein, vector<vector<int>> &tableInfo,
       int pos = token.find('(');
       if (pos != string::npos) {
         tableInfo[i][index_num++] = stoi(token.substr(0, pos));
-        resourceName[i][index_name++] =
-            token.substr(pos + 1, token.size() - pos - 2);
+        string temp = token.substr(pos + 1, token.size() - pos - 2);
+        resourceName[i][index_name++] = temp;
+        bool flag = false;
+        for (int j = 0; j < nameOfResource.size(); j++)
+          if (nameOfResource[j] == temp) flag = true;
+        if (!flag) nameOfResource.push_back(temp);
+
       } else
         tableInfo[i][index_num++] = stoi(token);
     }
@@ -59,14 +65,14 @@ bool queueContains(queue<int> q, int index) {
 
 bool pqueueContains(priority_queue<pair<int, int>> pq, int index) {
   while (!pq.empty()) {
-	if (pq.top().second == index) return true;
-	pq.pop();
+    if (pq.top().second == index) return true;
+    pq.pop();
   }
   return false;
 }
 
 void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
-          char *namefileout) {
+          vector<string> nameOfResource, char *namefileout) {
   queue<int> readyQueue;
   queue<int> R1Queue;
   queue<int> R2Queue;
@@ -97,7 +103,7 @@ void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       if (tableInfo[currentCPU][1] > 0)
         tableInfo[currentCPU][1]--;
       else if (tableInfo[currentCPU][2] > 0) {
-        if (resourceName[currentCPU][0] == "R1")
+        if (resourceName[currentCPU][0] == nameOfResource[0])
           R1Queue.push(currentCPU);
         else
           R2Queue.push(currentCPU);
@@ -106,7 +112,7 @@ void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       } else if (tableInfo[currentCPU][3] > 0)
         tableInfo[currentCPU][3]--;
       else if (tableInfo[currentCPU][4] > 0) {
-        if (resourceName[currentCPU][1] == "R1")
+        if (resourceName[currentCPU][1] == nameOfResource[0])
           R1Queue.push(currentCPU);
         else
           R2Queue.push(currentCPU);
@@ -196,8 +202,8 @@ void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
 }
 
 void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
-         char *namefileout) {
-  priority_queue<pair<int,int>> readyQueue;
+         vector<string> nameOfResource, char *namefileout) {
+  priority_queue<pair<int, int>> readyQueue;
   queue<int> R1Queue;
   queue<int> R2Queue;
   vector<int> CPU;
@@ -212,7 +218,8 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
 
   while (!checkDone(tableInfo)) {
     for (int i = 0; i < tableInfo.size(); i++) {
-      if (tableInfo[i][0] == time) readyQueue.push(make_pair(-tableInfo[i][1], i));
+      if (tableInfo[i][0] == time)
+        readyQueue.push(make_pair(-tableInfo[i][1], i));
       if (stillInProcess(tableInfo, i) && tableInfo[i][0] <= time) TT[i]++;
       if (pqueueContains(readyQueue, i) && tableInfo[i][0] < time) WT[i]++;
     }
@@ -227,7 +234,7 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       if (tableInfo[currentCPU][1] > 0)
         tableInfo[currentCPU][1]--;
       else if (tableInfo[currentCPU][2] > 0) {
-        if (resourceName[currentCPU][0] == "R1")
+        if (resourceName[currentCPU][0] == nameOfResource[0])
           R1Queue.push(currentCPU);
         else
           R2Queue.push(currentCPU);
@@ -236,7 +243,7 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       } else if (tableInfo[currentCPU][3] > 0)
         tableInfo[currentCPU][3]--;
       else if (tableInfo[currentCPU][4] > 0) {
-        if (resourceName[currentCPU][1] == "R1")
+        if (resourceName[currentCPU][1] == nameOfResource[0])
           R1Queue.push(currentCPU);
         else
           R2Queue.push(currentCPU);
@@ -289,6 +296,295 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
     CPU.push_back(currentCPU);
     R1.push_back(currentR1);
     R2.push_back(currentR2);
+
+    time++;
+  }
+  ofstream fileout;
+  fileout.open(namefileout);
+  for (int i = 0; i < CPU.size(); i++) {
+    if (CPU[i] + 1)
+      fileout << CPU[i] + 1 << " ";
+    else
+      fileout << "_ ";
+  }
+  fileout << endl;
+  for (int i = 0; i < R1.size(); i++) {
+    if (R1[i] + 1)
+      fileout << R1[i] + 1 << " ";
+    else
+      fileout << "_ ";
+  }
+  fileout << endl;
+  for (int i = 0; i < R2.size(); i++) {
+    if (R2[i] + 1)
+      fileout << R2[i] + 1 << " ";
+    else
+      fileout << "_ ";
+  }
+  fileout << endl;
+  for (int i = 0; i < TT.size(); i++) {
+    fileout << TT[i] << " ";
+  }
+  fileout << endl;
+  for (int i = 0; i < WT.size(); i++) {
+    fileout << WT[i] << " ";
+  }
+  fileout.close();
+}
+
+bool checkQuantumTime(vector<int> lastProccess, int quantumTime, int currentCPU) {
+  if(lastProccess.size() < quantumTime) return false;
+  for (int i = 0; i < quantumTime; i++)
+    if (lastProccess[lastProccess.size() - 1 - i] != currentCPU) return false;
+  return true;
+}
+
+void RR(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
+        vector<string> nameOfResource, char *namefileout, int quantumTime) {
+  queue<int> readyQueue;
+  queue<int> R1Queue;
+  queue<int> R2Queue;
+  vector<int> CPU;
+  vector<int> R1;
+  vector<int> R2;
+  vector<int> TT(tableInfo.size(), 0);
+  vector<int> WT(tableInfo.size(), 0);
+  int time = 0;
+  int currentCPU = -1;
+  int currentR1 = -1;
+  int currentR2 = -1;
+  vector<int> lastProccess;
+
+  while (!checkDone(tableInfo)) {
+    for (int i = 0; i < tableInfo.size(); i++) {
+      if (tableInfo[i][0] == time) readyQueue.push(i);
+      if (stillInProcess(tableInfo, i) && tableInfo[i][0] <= time) TT[i]++;
+      if (queueContains(readyQueue, i) && tableInfo[i][0] < time) WT[i]++;
+    }
+
+  CPU:
+    if (currentCPU == -1 && !readyQueue.empty()) {
+      currentCPU = readyQueue.front();
+      readyQueue.pop();
+    }
+
+    if (currentCPU != -1) {
+      if (tableInfo[currentCPU][1] > 0) {
+        if(checkQuantumTime(lastProccess, quantumTime, currentCPU)) {
+          readyQueue.push(currentCPU);
+          currentCPU = -1;
+          goto CPU;
+        }
+        tableInfo[currentCPU][1]--;
+        lastProccess.push_back(currentCPU);
+      } else if (tableInfo[currentCPU][2] > 0) {
+        if (resourceName[currentCPU][0] == nameOfResource[0])
+          R1Queue.push(currentCPU);
+        else
+          R2Queue.push(currentCPU);
+        currentCPU = -1;
+        goto CPU;
+      } else if (tableInfo[currentCPU][3] > 0) {
+        if(checkQuantumTime(lastProccess, quantumTime, currentCPU)) {
+          readyQueue.push(currentCPU);
+          currentCPU = -1;
+          goto CPU;
+        }
+        tableInfo[currentCPU][3]--;
+        lastProccess.push_back(currentCPU);
+      }
+
+      else if (tableInfo[currentCPU][4] > 0) {
+        if (resourceName[currentCPU][1] == nameOfResource[0])
+          R1Queue.push(currentCPU);
+        else
+          R2Queue.push(currentCPU);
+        currentCPU = -1;
+        goto CPU;
+      } else {
+        currentCPU = -1;
+        goto CPU;
+      }
+    }
+  R1:
+    if (currentR1 == -1 && !R1Queue.empty()) {
+      currentR1 = R1Queue.front();
+      R1Queue.pop();
+    }
+    if (currentR1 != -1) {
+      if (tableInfo[currentR1][2] > 0)
+        tableInfo[currentR1][2]--;
+      else if (tableInfo[currentR1][3] > 0) {
+        readyQueue.push(currentR1);
+        currentR1 = -1;
+        goto R1;
+
+      } else if (tableInfo[currentR1][4] > 0)
+        tableInfo[currentR1][4]--;
+      else {
+        currentR1 = -1;
+        goto R1;
+      }
+    }
+  R2:
+    if (currentR2 == -1 && !R2Queue.empty()) {
+      currentR2 = R2Queue.front();
+      R2Queue.pop();
+    }
+    if (currentR2 != -1) {
+      if (tableInfo[currentR2][2] > 0)
+        tableInfo[currentR2][2]--;
+      else if (tableInfo[currentR2][3] > 0) {
+        readyQueue.push(currentR2);
+        currentR2 = -1;
+        goto R2;
+      } else if (tableInfo[currentR2][4] > 0)
+        tableInfo[currentR2][4]--;
+      else {
+        currentR2 = -1;
+        goto R2;
+      }
+    }
+    CPU.push_back(currentCPU);
+    R1.push_back(currentR1);
+    R2.push_back(currentR2);
+
+    time++;
+  }
+  ofstream fileout;
+  fileout.open(namefileout);
+  for (int i = 0; i < CPU.size(); i++) {
+    if (CPU[i] + 1)
+      fileout << CPU[i] + 1 << " ";
+    else
+      fileout << "_ ";
+  }
+  fileout << endl;
+  for (int i = 0; i < R1.size(); i++) {
+    if (R1[i] + 1)
+      fileout << R1[i] + 1 << " ";
+    else
+      fileout << "_ ";
+  }
+  fileout << endl;
+  for (int i = 0; i < R2.size(); i++) {
+    if (R2[i] + 1)
+      fileout << R2[i] + 1 << " ";
+    else
+      fileout << "_ ";
+  }
+  fileout << endl;
+  for (int i = 0; i < TT.size(); i++) {
+    fileout << TT[i] << " ";
+  }
+  fileout << endl;
+  for (int i = 0; i < WT.size(); i++) {
+    fileout << WT[i] << " ";
+  }
+  fileout.close();
+}
+
+void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
+         vector<string> nameOfResource, char *namefileout) {
+  priority_queue<pair<int, int>> readyQueue;
+  queue<int> R1Queue;
+  queue<int> R2Queue;
+  vector<int> CPU;
+  vector<int> R1;
+  vector<int> R2;
+  vector<int> TT(tableInfo.size(), 0);
+  vector<int> WT(tableInfo.size(), 0);
+  int time = 0;
+  int currentCPU = -1;
+  int currentR1 = -1;
+  int currentR2 = -1;
+
+  while (!checkDone(tableInfo)) {
+    for (int i = 0; i < tableInfo.size(); i++) {
+      if (tableInfo[i][0] == time)
+        readyQueue.push(make_pair(-tableInfo[i][1], i));
+      if (stillInProcess(tableInfo, i) && tableInfo[i][0] <= time) TT[i]++;
+      if (pqueueContains(readyQueue, i) && tableInfo[i][0] < time) WT[i]++;
+    }
+
+  CPU:
+    if (currentCPU == -1 && !readyQueue.empty()) {
+      currentCPU = readyQueue.top().second;
+      readyQueue.pop();
+    }
+
+    if (currentCPU != -1) {
+      if (tableInfo[currentCPU][1] > 0){
+        tableInfo[currentCPU][1]--;
+        readyQueue.push(make_pair(-tableInfo[currentCPU][1], currentCPU));
+      }
+      else if (tableInfo[currentCPU][2] > 0) {
+        if (resourceName[currentCPU][0] == nameOfResource[0])
+          R1Queue.push(currentCPU);
+        else
+          R2Queue.push(currentCPU);
+        currentCPU = -1;
+        goto CPU;
+      } else if (tableInfo[currentCPU][3] > 0){
+        tableInfo[currentCPU][3]--;
+        readyQueue.push(make_pair(-tableInfo[currentCPU][3], currentCPU));
+      }
+        
+      else if (tableInfo[currentCPU][4] > 0) {
+        if (resourceName[currentCPU][1] == nameOfResource[0])
+          R1Queue.push(currentCPU);
+        else
+          R2Queue.push(currentCPU);
+        currentCPU = -1;
+        goto CPU;
+      } else {
+        currentCPU = -1;
+        goto CPU;
+      }
+    }
+  R1:
+    if (currentR1 == -1 && !R1Queue.empty()) {
+      currentR1 = R1Queue.front();
+      R1Queue.pop();
+    }
+    if (currentR1 != -1) {
+      if (tableInfo[currentR1][2] > 0)
+        tableInfo[currentR1][2]--;
+      else if (tableInfo[currentR1][3] > 0) {
+        readyQueue.push(make_pair(-tableInfo[currentR1][3], currentR1));
+        currentR1 = -1;
+        goto R1;
+
+      } else if (tableInfo[currentR1][4] > 0)
+        tableInfo[currentR1][4]--;
+      else {
+        currentR1 = -1;
+        goto R1;
+      }
+    }
+  R2:
+    if (currentR2 == -1 && !R2Queue.empty()) {
+      currentR2 = R2Queue.front();
+      R2Queue.pop();
+    }
+    if (currentR2 != -1) {
+      if (tableInfo[currentR2][2] > 0)
+        tableInfo[currentR2][2]--;
+      else if (tableInfo[currentR2][3] > 0) {
+        readyQueue.push(make_pair(-tableInfo[currentR2][3], currentR2));
+        currentR2 = -1;
+        goto R2;
+      } else if (tableInfo[currentR2][4] > 0)
+        tableInfo[currentR2][4]--;
+      else {
+        currentR2 = -1;
+        goto R2;
+      }
+    }
+    CPU.push_back(currentCPU);
+    R1.push_back(currentR1);
+    R2.push_back(currentR2);
+    currentCPU = -1;
 
     time++;
   }
