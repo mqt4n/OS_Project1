@@ -180,6 +180,10 @@ void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR1][3] > 0) {
         readyQueue.push(currentR1);
         currentR1 = -1;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R1;
         goto R1;
 
       } else if (tableInfo[currentR1][4] > 0)
@@ -201,7 +205,10 @@ void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR2][3] > 0) {
         readyQueue.push(currentR2);
         currentR2 = -1;
-        goto R2;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R2;
       } else if (tableInfo[currentR2][4] > 0)
         tableInfo[currentR2][4]--;
       else {
@@ -284,7 +291,10 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR1][3] > 0) {
         readyQueue.push(make_pair(-tableInfo[currentR1][3], currentR1));
         currentR1 = -1;
-        goto R1;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R1;
 
       } else if (tableInfo[currentR1][4] > 0)
         tableInfo[currentR1][4]--;
@@ -305,7 +315,10 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR2][3] > 0) {
         readyQueue.push(make_pair(-tableInfo[currentR2][3], currentR2));
         currentR2 = -1;
-        goto R2;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R2;
       } else if (tableInfo[currentR2][4] > 0)
         tableInfo[currentR2][4]--;
       else {
@@ -400,7 +413,10 @@ void RR(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR1][3] > 0) {
         readyQueue.push(currentR1);
         currentR1 = -1;
-        goto R1;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R1;
 
       } else if (tableInfo[currentR1][4] > 0)
         tableInfo[currentR1][4]--;
@@ -421,7 +437,10 @@ void RR(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR2][3] > 0) {
         readyQueue.push(currentR2);
         currentR2 = -1;
-        goto R2;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R2;
       } else if (tableInfo[currentR2][4] > 0)
         tableInfo[currentR2][4]--;
       else {
@@ -508,7 +527,10 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR1][3] > 0) {
         readyQueue.push(make_pair(-tableInfo[currentR1][3], currentR1));
         currentR1 = -1;
-        goto R1;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R1;
 
       } else if (tableInfo[currentR1][4] > 0)
         tableInfo[currentR1][4]--;
@@ -529,7 +551,10 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       else if (tableInfo[currentR2][3] > 0) {
         readyQueue.push(make_pair(-tableInfo[currentR2][3], currentR2));
         currentR2 = -1;
-        goto R2;
+        if (currentCPU == -1)
+          goto CPU;
+        else
+          goto R2;
       } else if (tableInfo[currentR2][4] > 0)
         tableInfo[currentR2][4]--;
       else {
