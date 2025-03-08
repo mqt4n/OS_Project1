@@ -1,10 +1,13 @@
 #include "func.cpp"
 
 int main(int argc, char *argv[]) {
-  int number = argc;
   ifstream filein;
   filein.open(argv[1]);
 
+  if(argc != 3) {
+    cout << "Invalid number of arguments" << endl;
+    return 0;
+  }
   if (!filein) {
     cout << "File not found" << endl;
     return 0;
@@ -25,6 +28,5 @@ int main(int argc, char *argv[]) {
     SJF(tableInfo, resourceName, nameOfResource, argv[2]);
   else if (choice == 4)
     SRTN(tableInfo, resourceName, nameOfResource, argv[2]);
-
   return 0;
 }
