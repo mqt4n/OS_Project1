@@ -213,7 +213,7 @@ void FCFS(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
     for (int i = 0; i < tableInfo.size(); i++)
       if (queueContains(readyQueue, i) && tableInfo[i][0] <= time &&
           currentCPU != i)
-        WT[i]++;
+        if (tempR1 != i && tempR2 != i) WT[i]++;
 
     CPU.push_back(currentCPU);
     if (tempR1 != -1) {
@@ -330,7 +330,7 @@ void SJF(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
     for (int i = 0; i < tableInfo.size(); i++)
       if (pqueueContains(readyQueue, i) && tableInfo[i][0] <= time &&
           currentCPU != i)
-        WT[i]++;
+        if (tempR1 != i && tempR2 != i) WT[i]++;
 
     CPU.push_back(currentCPU);
     if (tempR1 != -1) {
@@ -458,7 +458,7 @@ void RR(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
     for (int i = 0; i < tableInfo.size(); i++)
       if (queueContains(readyQueue, i) && tableInfo[i][0] <= time &&
           currentCPU != i)
-        WT[i]++;
+        if (tempR1 != i && tempR2 != i) WT[i]++;
 
     CPU.push_back(currentCPU);
     if (tempR1 != -1) {
@@ -494,7 +494,6 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
   int tempR2 = -1;
 
   while (!checkDone(tableInfo)) {
-
     for (int i = 0; i < tableInfo.size(); i++) {
       if (tableInfo[i][0] == time)
         readyQueue.push(make_pair(-tableInfo[i][1], i));
@@ -580,7 +579,7 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
     for (int i = 0; i < tableInfo.size(); i++)
       if (pqueueContains(readyQueue, i) && tableInfo[i][0] <= time &&
           currentCPU != i)
-        WT[i]++;
+        if (tempR1 != i && tempR2 != i) WT[i]++;
 
     CPU.push_back(currentCPU);
     if (tempR1 != -1) {
@@ -595,35 +594,6 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
       R2.push_back(currentR2);
     currentCPU = -1;
     time++;
-    // cout<<endl;
-    // cout<<time-1<<endl;
-    // for (int i = 0; i<tableInfo.size();i++){
-    //   for (int j = 0; j<5;j++){
-    //     cout << tableInfo[i][j] << " ";
-    //   }
-    //   cout << endl;
-    // }
-
-    // for(int i = 0; i<CPU.size();i++){
-    //   cout << CPU[i]+1 << " ";
-    // }
-    // cout << endl;
-    // for(int i = 0; i<R1.size();i++){
-    //   cout << R1[i]+1 << " ";
-    // }
-    // cout << endl;
-    // for(int i = 0; i<R2.size();i++){
-    //   cout << R2[i]+1 << " ";
-    // }
-    // cout << endl;
-    // for(int i = 0; i<TT.size();i++){
-    //   cout << TT[i] << " ";
-    // }
-    // cout << endl;
-    // for(int i = 0; i<WT.size();i++){
-    //   cout << WT[i] << " ";
-    // }
-    // cout << endl;
   }
   write_to_file(CPU, R1, R2, TT, WT, namefileout);
 }
