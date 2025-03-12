@@ -26,7 +26,7 @@ mv 23127115_23127334 ../
 cd ..
 ```
 
-### 5. Run the program
+### 6. Run the program
 ```bash
 ./23127115_23127334 input/input00.txt output/output00.txt
 ```
