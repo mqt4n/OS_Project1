@@ -1,34 +1,36 @@
-OS_Project1
+# OS_Project1
 
-Cách chạy chương trình
+## How to Run the Program
 
-1. Di chuyển vào thư mục dự án
-
+### 1. Navigate to the project directory
+```bash
 cd OS_Project1
+```
 
-2. Di chuyển vào thư mục mã nguồn
-
+### 2. Navigate to the source code directory
+```bash
 cd 23127115_23127334-Code
+```
 
-3. Biên dịch chương trình
-
+### 3. Compile the program
+```bash
 g++ -o 23127115_23127334 main.cpp 23127115_func.cpp 23127334_func.cpp
+```
 
-4. Di chuyển tệp thực thi ra ngoài thư mục mã nguồn
-
+### 4. Move the executable file outside the source code directory
+```bash
 mv 23127115_23127334 ../
-
-5. Chạy chương trình
-
+```
+### 5. Run the program
+```bash
 ./23127115_23127334 input/input00.txt output/output00.txt
+```
+# Notes
 
-Lưu ý
+- Ensure that all necessary source files (main.cpp, 23127115_func.cpp, 23127334_func.cpp) are present.
 
-Đảm bảo có đủ các tệp mã nguồn cần thiết (main.cpp, 23127115_func.cpp, 23127334_func.cpp).
+- Make sure there is an input/ directory containing the input files and an output/ directory to store the results.
 
-Đảm bảo có thư mục input/ chứa file đầu vào và output/ để lưu kết quả.
+- If using Windows, you may need to replace the mv command with a manual file move operation or use move.
 
-Nếu sử dụng Windows, có thể cần đổi lệnh mv thành thao tác di chuyển tệp thủ công hoặc dùng move.
-
-📌 Mọi thắc mắc xin liên hệ nhóm phát triển. 🚀
-
+📌 For any questions, please contact the development team. 🚀
