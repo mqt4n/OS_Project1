@@ -17,16 +17,7 @@ cd 23127115_23127334-Code
 g++ -o 23127115_23127334 main.cpp 23127115_func.cpp 23127334_func.cpp
 ```
 
-### 4. Move the executable file outside the source code directory
-```bash
-mv 23127115_23127334 ../
-```
-### 5. Change directory to the root of the project
-```bash
-cd ..
-```
-
-### 6. Run the program
+### 4. Run the program
 ```bash
 ./23127115_23127334 input/input00.txt output/output00.txt
 ```
