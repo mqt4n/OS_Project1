@@ -21,6 +21,11 @@ g++ -o 23127115_23127334 main.cpp 23127115_func.cpp 23127334_func.cpp
 ```bash
 mv 23127115_23127334 ../
 ```
+### 5. Change directory to the root of the project
+```bash
+cd ..
+```
+
 ### 5. Run the program
 ```bash
 ./23127115_23127334 input/input00.txt output/output00.txt
