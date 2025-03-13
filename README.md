@@ -14,19 +14,19 @@ cd 23127115_23127334-Code
 
 ### 3. Compile the program
 ```bash
-g++ -o 23127115_23127334 main.cpp 23127115_func.cpp 23127334_func.cpp
+g++ -o 23127115_23127334 *.cpp
 ```
 
 ### 4. Run the program
 ```bash
-./23127115_23127334 input/input00.txt output/output00.txt
+./23127115_23127334 Input.exe Output.exe
 ```
 # Notes
 
 - Ensure that all necessary source files (main.cpp, 23127115_func.cpp, 23127334_func.cpp) are present.
 
-- Make sure there is an input/ directory containing the input files and an output/ directory to store the results.
+- Adjust the input and output file names as needed.
 
-- If using Windows, you may need to replace the mv command with a manual file move operation or use move.
+- Make sure there is an input/ directory containing the input files and an output/ directory to store the results.
 
 📌 For any questions, please contact the development team. 🚀

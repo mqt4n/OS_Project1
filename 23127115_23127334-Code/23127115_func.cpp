@@ -605,7 +605,7 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
 
   CPU:
     if (currentCPU == -1 && !readyQueue.empty()) {
-      currentCPU = readyQueue.top().second.second;
+      currentCPU = -readyQueue.top().second.second;
       readyQueue.pop();
     }
     if (currentCPU != -1) {
@@ -685,10 +685,17 @@ void SRTN(vector<vector<int>> tableInfo, vector<vector<string>> resourceName,
     if (currentR2 != -1) {
       if (tableInfo[currentR2][2] > 0) {
         tableInfo[currentR2][2]--;
-        if (!tableInfo[currentR2][2] && tableInfo[currentR2][3]) {
-          readyQueue.push(
-              make_pair(-tableInfo[currentR2][3],
-                        make_pair(-lastUseCPU[currentR2], -currentR2)));
+        if (!tableInfo[currentR2][2]) {
+          if (tableInfo[currentR2][3])
+            readyQueue.push(
+                make_pair(-tableInfo[currentR2][3],
+                          make_pair(-lastUseCPU[currentR2], -currentR2)));
+          else if (tableInfo[currentR2][4]) {
+            if (resourceName[currentR2][1] == nameOfResource[0])
+              R1Queue.push(currentR2);
+            else
+              R2Queue.push(currentR2);
+          }
           tempR2 = currentR2;
           currentR2 = -1;
         }
