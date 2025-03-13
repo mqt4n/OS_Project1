@@ -34,7 +34,6 @@ vector<process> getData(string filename, int &Alg, int &TimeQuantum, string &a,
         else if (b == "" &&
                  tmp.substr(index + 1, (tmp.size() - 1) - index - 1) != a) {
           b = tmp.substr(index + 1, (tmp.size() - 1) - index - 1);
-          cout << "good morning" << endl;
         }
 
         if (p.r1.first == 0) {
@@ -115,6 +114,14 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
   trace[index_first_come] = 1;
 
   ReadyQueueCPU.push({data[index_first_come], index_first_come + 1});
+
+  for (int i = 0; i < data.size(); i++) {
+    if (data[index_first_come].ArriveTime == data[i].ArriveTime && index_first_come != i) {
+      ReadyQueueCPU.push({data[i], i + 1});
+      trace[i] = 1;
+    }
+  }
+
   pair<process, int> CPU_process;
   pair<process, int> R1_process;
   pair<process, int> R2_process;
@@ -422,8 +429,6 @@ vector<dataTime> RoundRobin(vector<process> data, int TimeQuantum,
     }
   }
 
-  cout << idx_fir_come << endl;
-
   for (int i = 0; i < data[idx_fir_come].ArriveTime; i++) {
     CPU_illustration += " _";
     R1_illustration += " _";
@@ -431,13 +436,20 @@ vector<dataTime> RoundRobin(vector<process> data, int TimeQuantum,
     count_time += 1;
   }
 
-  ReadyQueueCPU.push(idx_fir_come);
-  // Real time
   vector<bool> trace(data.size(), false);
   trace[idx_fir_come] = 1;
+
+  ReadyQueueCPU.push(idx_fir_come);
+  for (int i = 0; i < data.size(); i++) {
+    if (data[idx_fir_come].ArriveTime == data[i].ArriveTime && idx_fir_come != i) {
+      ReadyQueueCPU.push(i);
+      trace[i] = 1;
+    }
+  }
+
+  // Real time
   int CPU_Process_Index = 0, R1_Process_Index = 0, R2_Process_Index = 0;
   bool CPU_Operating = 0, IO_1_Operating = 1, IO_2_Operating = 1; 
-
   while (!isComplete(data)) {
     bool timeOut = 0;
     bool prior = 0;
