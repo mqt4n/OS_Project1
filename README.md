@@ -19,7 +19,7 @@ g++ -o 23127115_23127334 *.cpp
 
 ### 4. Run the program
 ```bash
-./23127115_23127334 Input.exe Output.exe
+./23127115_23127334 Input.txt Output.txt
 ```
 # Notes
 
