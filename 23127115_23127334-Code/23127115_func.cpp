@@ -77,9 +77,9 @@ bool pqueueContains(priority_queue<pair<int, pair<int, int>>> pq, int index) {
   return false;
 }
 
-bool checkUseResource2(vector<int> &R2) {
-  for (int i = 0; i < R2.size(); i++)
-    if (R2[i] + 1) return true;
+bool checkUseResource(vector<int> &R) {
+  for (int i = 0; i < R.size(); i++)
+    if (R[i] + 1) return true;
   return false;
 }
 
@@ -94,14 +94,16 @@ void write_to_file(vector<int> &CPU, vector<int> &R1, vector<int> &R2,
       fileout << "_ ";
   }
   fileout << endl;
-  for (int i = 0; i < R1.size(); i++) {
-    if (R1[i] + 1)
-      fileout << R1[i] + 1 << " ";
-    else
-      fileout << "_ ";
+  if (checkUseResource(R1)) {
+    for (int i = 0; i < R1.size(); i++) {
+      if (R1[i] + 1)
+        fileout << R1[i] + 1 << " ";
+      else
+        fileout << "_ ";
+    }
+    fileout << endl;
   }
-  fileout << endl;
-  if (checkUseResource2(R2)) {
+  if (checkUseResource(R2)) {
     for (int i = 0; i < R2.size(); i++) {
       if (R2[i] + 1)
         fileout << R2[i] + 1 << " ";

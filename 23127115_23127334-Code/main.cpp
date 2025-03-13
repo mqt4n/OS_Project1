@@ -33,6 +33,11 @@ void main_2(int choice, char* filenamein, char* filenameout) {
     res = SRTN(data, CPU_illustration, R1_illustration, R2_illustration, str1,
                str2);
 
+  CPU_illustration = CPU_illustration.substr(1, CPU_illustration.size() - 1);
+  if (str1.size() > 0)
+    R1_illustration = R1_illustration.substr(1, R1_illustration.size() - 1);
+  if (str2.size() > 0)
+    R2_illustration = R2_illustration.substr(1, R2_illustration.size() - 1);
   fstream fout;
   fout.open(fileNameOut, ios::out);
   if (!fout.is_open()) {
@@ -40,7 +45,8 @@ void main_2(int choice, char* filenamein, char* filenameout) {
     return;
   }
 
-  fout << CPU_illustration << "\n" << R1_illustration << "\n";
+  fout << CPU_illustration << "\n";
+  if (str1.size() > 0) fout << R1_illustration << "\n";
   if (str2.size() > 0) fout << R2_illustration << "\n";
 
   for (int i = 0; i < res.size(); i++) {

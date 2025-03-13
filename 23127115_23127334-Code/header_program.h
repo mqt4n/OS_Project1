@@ -15,7 +15,7 @@ void printProcessing(vector<vector<int>> &tableInfo, vector<int> &CPU,
 bool checkDone(vector<vector<int>> tableInfo);
 bool stillInProcess(vector<vector<int>> tableInfo, int index);
 bool pqueueContains(priority_queue<pair<int, pair<int, int>>> pq, int index);
-bool checkUseResource2(vector<int> &R2);
+bool checkUseResource(vector<int> &R);
 void write_to_file(vector<int> &CPU, vector<int> &R1, vector<int> &R2,
                    vector<int> &TT, vector<int> &WT, char *&namefileout);
 bool checkQuantumTime(vector<int> &lastProccess, int quantumTime,
