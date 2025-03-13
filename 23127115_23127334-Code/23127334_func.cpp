@@ -614,7 +614,7 @@ vector<dataTime> RoundRobin(vector<process> data, int TimeQuantum,
         else if (data[R1_Process_Index].r2.second == a &&
             data[R1_Process_Index].r2.first != 0) {
           if (data[R1_Process_Index].r2.first == 1) {
-            R1_illustration += " " + to_string(R1_Process_Index);
+            R1_illustration += " " + to_string(R1_Process_Index + 1);
             data[R1_Process_Index].r2.first = 0;
 
             if (!IOQueue1.empty()) {
