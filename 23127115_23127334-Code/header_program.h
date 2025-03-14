@@ -44,15 +44,18 @@ struct dataTime {
 };
 
 struct Compare {
-  bool operator()(const std::pair<process, int> &a,
-                  const std::pair<process, int> &b) {
+  bool operator()(pair<process, pair<int, int>> &a, pair<process, pair<int, int>> &b) {
     if (a.first.cpu1 > 0 && b.first.cpu1 > 0) {
+      if (a.first.cpu1 == b.first.cpu1) return a.second.second > b.second.second;
       return a.first.cpu1 > b.first.cpu1;
     } else if (a.first.cpu1 == 0 && a.first.cpu2 > 0 && b.first.cpu1 > 0) {
+      if (a.first.cpu2 == b.first.cpu1) return a.second.second > b.second.second;
       return a.first.cpu2 > b.first.cpu1;
     } else if (a.first.cpu1 > 0 && b.first.cpu1 == 0 && b.first.cpu2 > 0) {
+      if (a.first.cpu1 == b.first.cpu2) return a.second.second > b.second.second;
       return a.first.cpu1 > b.first.cpu2;
     } else {
+      if (a.first.cpu2 == b.first.cpu2) return a.second.second > b.second.second;
       return a.first.cpu2 > b.first.cpu2;
     }
   }

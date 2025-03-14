@@ -4,7 +4,7 @@ vector<process> getData(string filename, int &Alg, int &TimeQuantum, string &a,
                           string &b) {
   fstream fin(filename, ios::in);
   if (!fin) {
-    cout << "Can open this file" << endl;
+    cout << "Can not open this file" << endl;
     return {};
   }
 
@@ -64,10 +64,10 @@ bool existsInQueue(queue<int> q, int target) {
 }
 
 bool existsInPriorityQueue(
-    priority_queue<pair<process, int>, vector<pair<process, int>>, Compare> q,
+    priority_queue<pair<process, pair<int, int>>, vector<pair<process, pair<int, int>>>, Compare> q,
     int target) {
   while (!q.empty()) {
-    if (q.top().second == target) {
+    if (q.top().second.first == target) {
       return true;
     }
     q.pop();
@@ -85,9 +85,9 @@ bool isComplete(vector<process> data) {
 vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
                       string &R1_illustration, string &R2_illustration,
                       string a, string b) {
-  priority_queue<pair<process, int> , vector<pair<process, int>>, Compare> ReadyQueueCPU;
-  queue<pair<process, int>> IOQueue1;
-  queue<pair<process, int>> IOQueue2;
+  priority_queue<pair<process, pair<int, int>> , vector<pair<process, pair<int, int>>>, Compare> ReadyQueueCPU;
+  queue<pair<process, pair<int, int>>> IOQueue1;
+  queue<pair<process, pair<int, int>>> IOQueue2;
 
   vector<dataTime> dt;
   for (int i = 0; i < data.size(); i++) {
@@ -113,18 +113,18 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
   vector<bool> trace(data.size(), false);
   trace[index_first_come] = 1;
 
-  ReadyQueueCPU.push({data[index_first_come], index_first_come + 1});
+  ReadyQueueCPU.push({data[index_first_come], {index_first_come + 1, -index_first_come}});
 
   for (int i = 0; i < data.size(); i++) {
     if (data[index_first_come].ArriveTime == data[i].ArriveTime && index_first_come != i) {
-      ReadyQueueCPU.push({data[i], i + 1});
+      ReadyQueueCPU.push({data[i], {i + 1, -i}});
       trace[i] = 1;
     }
   }
 
-  pair<process, int> CPU_process;
-  pair<process, int> R1_process;
-  pair<process, int> R2_process;
+  pair<process, pair<int, int>> CPU_process;
+  pair<process, pair<int, int>> R1_process;
+  pair<process, pair<int, int>> R2_process;
 
   bool CPU_Operating = 0, IO_1_Operating = 1, IO_2_Operating = 1;
 
@@ -134,7 +134,7 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
     int len_time = 1;
     bool isOne = 1, prior = 0;
 
-    CPU_process.second = 0;
+
     if (!ReadyQueueCPU.empty()) {
       CPU_process = ReadyQueueCPU.top();
       ReadyQueueCPU.pop();
@@ -157,10 +157,10 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
       }
     }
 
-    // using time quantum for running scheduling algorithsm
-    for (int j = 0; j < data.size(); j++) {
+    // using time quantum for ru8nning scheduling algorithsm
+    for (int j = 0; j < data.size() ; j++) {
       if (data[j].ArriveTime == count_time && trace[j] == 0) {
-        ReadyQueueCPU.push({data[j], j + 1});
+        ReadyQueueCPU.push({data[j], {j + 1, j}});
         trace[j] = 1;
       }
     }
@@ -176,33 +176,37 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
 
       // The process use cpu have done
       if (curValueCPU == 1) {
-        CPU_illustration += (" " + to_string(CPU_process.second));
+        CPU_illustration += (" " + to_string(CPU_process.second.first));
 
         if (isOne) {
           CPU_process.first.cpu1 = 0;
-          data[CPU_process.second - 1].cpu1 = 0;
+          data[CPU_process.second.first - 1].cpu1 = 0;
         } else {
           CPU_process.first.cpu2 = 0;
-          data[CPU_process.second - 1].cpu2 = 0;
+          data[CPU_process.second.first - 1].cpu2 = 0;
         }
 
         if (isOne) {
           if (CPU_process.first.r1.first != 0) {
             if (CPU_process.first.r1.second == a) {
+              CPU_process.second.second = count_time;
               IOQueue1.push(CPU_process);
             }
 
             if (CPU_process.first.r1.second == b) {
+              CPU_process.second.second = count_time;
               IOQueue2.push(CPU_process);
             }
           }
         } else {
           if (CPU_process.first.r2.first != 0) {
             if (CPU_process.first.r2.second == a) {
+              CPU_process.second.second = count_time;
               IOQueue1.push(CPU_process);
             }
 
             if (CPU_process.first.r2.second == b) {
+              CPU_process.second.second = count_time;
               IOQueue2.push(CPU_process);
             }
           }
@@ -210,20 +214,20 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
         if (CPU_process.first.cpu1 == 0 && CPU_process.first.cpu2 == 0 &&
             CPU_process.first.r1.first == 0 &&
             CPU_process.first.r2.first == 0) {
-          dt[CPU_process.second - 1].turn_around_time =
+          dt[CPU_process.second.first - 1].turn_around_time =
               count_time - CPU_process.first.ArriveTime;
         }
         CPU_Operating = 1;
 
         // continue use CPU
       } else {
-        CPU_illustration += (" " + to_string(CPU_process.second));
+        CPU_illustration += (" " + to_string(CPU_process.second.first));
         if (isOne) {
           CPU_process.first.cpu1 -= 1;
-          data[CPU_process.second - 1].cpu1 -= 1;
+          data[CPU_process.second.first - 1].cpu1 -= 1;
         } else {
           CPU_process.first.cpu2 -= 1;
-          data[CPU_process.second - 1].cpu2 -= 1;
+          data[CPU_process.second.first - 1].cpu2 -= 1;
         }
         prior = 1;
       }
@@ -239,24 +243,27 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
       if (R1_process.first.r1.second == a && R1_process.first.r1.first != 0) {
         //  R1 have been almost empty
         if (R1_process.first.r1.first == 1) {
-          R1_illustration += " " + to_string(R1_process.second);
+          R1_illustration += " " + to_string(R1_process.second.first);
 
           R1_process.first.r1.first = 0;
-          data[R1_process.second - 1].r1.first = 0;
+          data[R1_process.second.first - 1].r1.first = 0;
 
           if (R1_process.first.cpu2 != 0) {
+            R1_process.second.second = count_time;
             ReadyQueueCPU.push(R1_process);
           } else if (R1_process.first.r2.first != 0) {
             if (R1_process.first.r2.second == a) {
+              R1_process.second.second = count_time;
               IOQueue1.push(R1_process);
             } else
+              R1_process.second.second = count_time;
               IOQueue2.push(R1_process);
           }
 
           if (R1_process.first.cpu1 == 0 && R1_process.first.cpu2 == 0 &&
               R1_process.first.r1.first == 0 &&
               R1_process.first.r2.first == 0) {
-            dt[R1_process.second - 1].turn_around_time =
+            dt[R1_process.second.first - 1].turn_around_time =
                 count_time - R1_process.first.ArriveTime;
           }
 
@@ -271,8 +278,8 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
 
         } else if (R1_process.first.r1.first > 1) {
           R1_process.first.r1.first -= 1;
-          data[R1_process.second - 1].r1.first -= 1;
-          R1_illustration += " " + to_string(R1_process.second);
+          data[R1_process.second.first - 1].r1.first -= 1;
+          R1_illustration += " " + to_string(R1_process.second.first);
         }
 
       }
@@ -280,14 +287,14 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
       else if (R1_process.first.r2.second == a &&
                R1_process.first.r2.first != 0) {
         if (R1_process.first.r2.first == 1) {
-          R1_illustration += " " + to_string(R1_process.second);
+          R1_illustration += " " + to_string(R1_process.second.first);
           R1_process.first.r2.first = 0;
-          data[R1_process.second - 1].r2.first = 0;
+          data[R1_process.second.first - 1].r2.first = 0;
 
           if (R1_process.first.cpu1 == 0 && R1_process.first.cpu2 == 0 &&
               R1_process.first.r1.first == 0 &&
               R1_process.first.r2.first == 0) {
-            dt[R1_process.second - 1].turn_around_time =
+            dt[R1_process.second.first - 1].turn_around_time =
                 count_time - R1_process.first.ArriveTime;
           }
 
@@ -301,8 +308,8 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
 
         } else if (R1_process.first.r2.first > 1) {
           R1_process.first.r2.first -= 1;
-          data[R1_process.second - 1].r2.first -= 1;
-          R1_illustration += " " + to_string(R1_process.second);
+          data[R1_process.second.first - 1].r2.first -= 1;
+          R1_illustration += " " + to_string(R1_process.second.first);
         }
       }
     }
@@ -322,21 +329,23 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
     if (IO_2_Operating == 0) {
       if (R2_process.first.r1.second == b && R2_process.first.r1.first != 0) {
         if (R2_process.first.r1.first == 1) {
-          R2_illustration += " " + to_string(R2_process.second);
+          R2_illustration += " " + to_string(R2_process.second.first);
 
           R2_process.first.r1.first = 0;
-          data[R2_process.second - 1].r1.first = 0;
+          data[R2_process.second.first - 1].r1.first = 0;
 
           if (R2_process.first.cpu2 != 0) {
+            R2_process.second.second = count_time;
             ReadyQueueCPU.push(R2_process);
           } else if (R2_process.first.r2.first != 0) {
+            R2_process.second.second = count_time;
             IOQueue2.push(R2_process);
           }
 
           if (R2_process.first.cpu1 == 0 && R2_process.first.cpu2 == 0 &&
               R2_process.first.r1.first == 0 &&
               R2_process.first.r2.first == 0) {
-            dt[R2_process.second - 1].turn_around_time =
+            dt[R2_process.second.first - 1].turn_around_time =
                 count_time - R2_process.first.ArriveTime;
           }
 
@@ -350,23 +359,23 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
 
         } else if (R2_process.first.r1.first > 1) {
           R2_process.first.r1.first -= 1;
-          data[R2_process.second - 1].r1.first -= 1;
+          data[R2_process.second.first - 1].r1.first -= 1;
 
-          R2_illustration += " " + to_string(R2_process.second);
+          R2_illustration += " " + to_string(R2_process.second.first);
         }
       }
 
       else if (R2_process.first.r2.second == b &&
                R2_process.first.r2.first != 0) {
         if (R2_process.first.r2.first == 1) {
-          R2_illustration += " " + to_string(R2_process.second);
+          R2_illustration += " " + to_string(R2_process.second.first);
           R2_process.first.r2.first = 0;
-          data[R2_process.second - 1].r2.first = 0;
+          data[R2_process.second.first - 1].r2.first = 0;
 
           if (R2_process.first.cpu1 == 0 && R2_process.first.cpu2 == 0 &&
               R2_process.first.r1.first == 0 &&
               R2_process.first.r2.first == 0) {
-            dt[R2_process.second - 1].turn_around_time =
+            dt[R2_process.second.first - 1].turn_around_time =
                 count_time - R2_process.first.ArriveTime;
           }
 
@@ -380,8 +389,8 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
 
         } else if (R2_process.first.r2.first > 1) {
           R2_process.first.r2.first -= 1;
-          data[R2_process.second - 1].r2.first -= 1;
-          R2_illustration += " " + to_string(R2_process.second);
+          data[R2_process.second.first - 1].r2.first -= 1;
+          R2_illustration += " " + to_string(R2_process.second.first);
         }
       }
     }
@@ -398,6 +407,7 @@ vector<dataTime> SRTN(vector<process> data, string &CPU_illustration,
     }
 
     if (prior == 1) {
+      CPU_process.second.second = count_time;
       ReadyQueueCPU.push(CPU_process);
       prior = 0;
     }
