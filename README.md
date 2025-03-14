@@ -1,25 +1,20 @@
 # OS_Project1
 
-## How to Run the Program
+## How to Run the Program In Command Line
 
 ### 1. Navigate to the project directory
 ```bash
 cd OS_Project1
 ```
 
-### 2. Navigate to the source code directory
+### 2. Navigate to the project directory
 ```bash
-cd 23127115_23127334-Code
+cd 23127115_23127334
 ```
 
-### 3. Compile the program
+### 3. Run the program
 ```bash
-g++ -o 23127115_23127334 *.cpp
-```
-
-### 4. Run the program
-```bash
-./23127115_23127334 Input.txt Output.txt
+23127115_23127334 Input.txt Output.txt
 ```
 # Notes
 

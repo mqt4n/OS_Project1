@@ -1,6 +1,0 @@
-4
-4
-1 1 1(ThanhDang) 1
-1 2 1(ThanhDang) 3
-3 5
-3 5
